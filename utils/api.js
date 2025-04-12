@@ -32,8 +32,12 @@ export const fetchBlogs = async (page = 1, limit = 5) => {
 
 export const fetchBlogBySlug = async (slug) => {
   try {
+    const response = await fetch(
+      `http://localhost:5000/api/blogs/slug/${slug}`
+    );
+    const body = await response.json();
     return {
-      data: null,
+      data: body,
     };
   } catch (error) {
     console.error("API error:", error);
@@ -43,9 +47,10 @@ export const fetchBlogBySlug = async (slug) => {
 
 export const fetchBlogById = async (id) => {
   try {
-    return {
-      data: null,
-    };
+    const response = await fetch(`http://localhost:5000/api/blogs/${id}`);
+    const body = await response.json();
+    console.log("controller data ", body);
+    return { data: body };
   } catch (error) {
     console.error("API error:", error);
     throw error;
@@ -77,17 +82,20 @@ export const createBlog = async (formData) => {
 
 export const updateBlog = async (id, formData) => {
   try {
-    return {
-      success: true,
-      data: {
-        id,
-        title: formData.title,
-        details: formData.details,
-        slug: formData.title.toLowerCase().replace(/\s+/g, "-"),
-        imageUrl: formData.image ? "image-url-would-go-here" : null,
-        updatedAt: new Date().toISOString(),
-      },
-    };
+    const form = new FormData();
+    form.append("title", formData.title);
+    form.append("details", formData.details);
+    if (formData.image) {
+      form.append("image", formData.image);
+    }
+
+    const response = await fetch(`http://localhost:5000/api/blogs/${id}`, {
+      method: "PUT",
+      body: form,
+    });
+
+    const data = await response.json();
+    console.log("updating done", data);
   } catch (error) {
     console.error("API error:", error);
     throw error;

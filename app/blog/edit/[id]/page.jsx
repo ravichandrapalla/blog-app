@@ -28,51 +28,10 @@ export default function EditBlog({ params }) {
 
     const fetchBlogData = async () => {
       try {
-        const mockBlogs = {
-          1: {
-            id: 1,
-            title: "Getting Started with Next.js",
-            slug: "getting-started-with-nextjs",
-            details: `Next.js is a React framework for production that makes building web applications simple and powerful.
+        const result = await fetchBlogById(id);
+        console.log(result);
 
-With Next.js, you get:
-- Server-side rendering and static site generation
-- Automatic code splitting for faster page loads
-- Client-side routing with optimized prefetching
-- Built-in CSS and Sass support
-- API routes to build API endpoints
-- Fully extendable
-
-This framework has gained tremendous popularity due to its developer experience and performance optimizations. Whether you're building a small personal blog or a large enterprise application, Next.js provides the tools you need to create a fast, user-friendly experience.`,
-            imageUrl: "/images/nextjs.jpg",
-            createdAt: "2025-04-10",
-          },
-          2: {
-            id: 2,
-            title: "Node.js Best Practices",
-            slug: "nodejs-best-practices",
-            details: `When building applications with Node.js, following established best practices can significantly improve your code quality and application performance.
-
-Here are some key Node.js best practices:
-
-1. Use async/await for asynchronous operations
-2. Implement proper error handling
-3. Follow the Twelve-Factor App methodology
-4. Use environment variables for configuration
-5. Implement logging for better debugging
-6. Write unit and integration tests
-7. Use a style guide and linter
-8. Keep your dependencies updated
-9. Use a process manager in production
-10. Implement proper security measures
-
-These practices will help you build more maintainable, secure, and efficient Node.js applications.`,
-            imageUrl: "/images/nodejs.jpg",
-            createdAt: "2025-04-09",
-          },
-        };
-
-        const blog = mockBlogs[id] || null;
+        const blog = result?.data || {};
 
         if (blog) {
           setFormData({
@@ -80,7 +39,7 @@ These practices will help you build more maintainable, secure, and efficient Nod
             details: blog.details,
             image: null,
           });
-          setImagePreview(blog.imageUrl);
+          setImagePreview(blog.img);
         }
 
         setLoading(false);
@@ -129,7 +88,7 @@ These practices will help you build more maintainable, secure, and efficient Nod
         throw new Error("Title and details are required");
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await updateBlog(id, formData);
 
       // Redirect to homepage after successful update
       router.push("/");
